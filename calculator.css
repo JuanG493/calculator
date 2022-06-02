@@ -1,0 +1,54 @@
+*,html{
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: large;
+}
+
+
+body{
+    display: flex;
+    justify-content: center;
+}
+.main-frame{
+    
+    align-items: center;
+    border: 2px solid rebeccapurple;
+    margin-top: 10%;
+    /* min-height: fit-content; */
+}
+.output{
+    height: 50px;
+    background-color: rgba(95, 163, 223, 0.3);
+    border: 2px solid black;
+    /* width: 62%; */
+    /* align-self: stretch; */
+}
+
+.button-frame {
+    display: grid;
+    /* width: 300px; */
+    /* height: 300px; */
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4,1fr);
+    text-align: center;
+    /* margin-top: 15%; */
+    cursor: pointer;
+
+
+}
+
+button {
+    /* background-color: red; */
+    min-width: 100px;
+    min-height: 100px;
+}
+
+#sum{
+    grid-column: 4;
+    grid-row: 4/6;
+}
+
+#result{
+    grid-column: 2/ 4 ;
+    grid-row: 5;
+}
