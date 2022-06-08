@@ -3,6 +3,7 @@ let mainFrame = document.querySelector('.button-frame');
 let elementsNmae = [7, 8, 9, '*', 4, 5, 6, '-', 1, 2, 3, '+', '÷', 'DEL', 0, 'CE', '.', '='];
 let idElemens = ['seven', 'eigh', 'nine', 'mult', 'four', 'five', 'six', 'min', 'one', 'two', 'three', 'sum', 'cero', 'float', 'division', 'CE', 'DEL', 'result']
 let optElements = ["*", '+', '-', '÷', '='];
+
 for (let a = 0; a <= elementsNmae.length - 1; a++) {
     let divchild = document.createElement('button');
     divchild.classList.add(`divChild`);
@@ -12,122 +13,135 @@ for (let a = 0; a <= elementsNmae.length - 1; a++) {
     mainFrame.appendChild(divchild);
 }
 
-// selector of elements and global variables
-
-
 let buttons = document.querySelectorAll('button');
 buttons.forEach(element => {
     element.addEventListener("click", calculatorNumbs);
-
 });
 
 let resultFrame = document.querySelector('.output');
+let historyFrame = document.querySelector('.history')
 
 let firstPartialV = "";
 let secondPartialV = "";
-let choiseOperation = "";
-let result = 0;
+let choiseOpt = "";
 let tester = "";
 
-let listOfOperators = [];  //the same as a result
+let listOpt = [];  //the same as a result
 let listOfValues = [];
 let history = [];
-let partialValue = "";
 let theText = "";
 
 
 
 //filters
 function calculatorNumbs() {
+    let histoValue = historyFrame.textContent;
+    let lastOperator = listOpt[listOpt.length - 1];
+
+
     theText = this.textContent;
-    
-    tester = this.textContent;
-    
-    let numValue = parseInt(this.textContent);
+
+
     const surchEle = optElements.some((element) => {
-        return element == tester;
+        return element == theText;
     })
 
-    if (theText == '=' && listOfOperators[listOfOperators.length - 1] == '=') {
-        partialResult();
+
+    if (!surchEle) {
+        historyFrame.textContent += theText;
+
     }
 
-    else if (surchEle) {
-        if (listOfValues.length >= 2) {//para quitar el segundo valor si la operacion a contnuar no era la misma anterior presionando el =
+
+
+    if (this.textContent == 'DEL') {
+        deleteAll();
+
+    } else if (this.textContent == 'CE') {
+        back();
+    } else {
+
+        if (lastOperator == "=" && theText != '=') {
             listOfValues.pop();
-            listOfOperators.push(theText);
+        }
+
+
+        if (theText != '=' && surchEle) {//check the last operator
+            choiseOpt = theText;
+            historyFrame.textContent += theText;//umm
+        }
+
+
+        if (!surchEle) {//para numeros
+            firstPartialV += theText;
+            resultFrame.textContent = firstPartialV;
+            if (listOfValues.length >= 2) {
+                historyFrame.textContent += firstPartialV;//umm
+                history.push(theText);
+                partialResult(...listOfValues)
+            }
 
 
         } else {
+            listOpt.push(theText);
+            if (firstPartialV != "") {
 
-            listOfOperators.push(this.textContent);
-            listOfValues.push(firstPartialV);
-            history.push(firstPartialV, this.textContent);
-            console.log(history)
-            resultFrame.textContent = listOfValues[listOfValues.length - 1];
-            firstPartialV = "";
+                history.push(firstPartialV);
+                listOfValues.push(firstPartialV);
+                firstPartialV = "";
 
-            if (listOfOperators.length >= 2) {
-                choiseOperation = listOfOperators[listOfOperators.length - 2]
-                partialResult();
+            }history.push(theText);
+
+            if (listOpt.length >= 2 && listOfValues.length >= 2) {//quiere decir segundo simbolo por ende llmar la funcion
+                partialResult(...listOfValues);
             }
         }
     }
-
-
-    else if (numValue >= 0 || this.textContent == '.') {
-        
-        if (listOfValues.length >= 1) {
-            resultFrame.textContent = "";
-        }
-
-        firstPartialV += this.textContent;
-        resultFrame.textContent = firstPartialV;
-    }
-    else if (this.textContent == 'DEL') {
-        deleteAll();
-    } else if (this.textContent == 'CE') {
-        back();
-    }
-
-}
+    console.log(history);
+}   
 
 
 function solutionOutp(solution) { //quita el primero y pone el resultaso en su lugar luego borra el segundo para una nueva operacion.
-  
- if (theText == '=') {
+    
+    
+    if (theText == '=') {
 
-        console.log("result: " + solution)
+        console.log("result: " + solution);
         listOfValues.splice(0, 1, solution.toString(10))
-        console.log(listOfValues);
+        resultFrame.textContent = solution;
+        historyFrame.textContent = solution;//umm
         
-        resultFrame.textContent = solution;
-    } else {
+        history.push(solution);
 
+    } else {
+        
         console.log("result: " + solution)
         listOfValues.splice(0, 1, solution.toString(10))
-        console.log(listOfValues);
+        //     // console.log(listOfValues);
         listOfValues.pop();
-        console.log(listOfValues);
-
         resultFrame.textContent = solution;
+        //     // console.log(listOfValues);
+        historyFrame.textContent = solution;//umm
+        
+        history.push(solution);
+        //     historyFrame.textContent = listOfValues[0];
+        
     }
-
+    console.log("listofV: " + listOfValues);
 
 }
 
-function partialResult() {
-    const newList = listOfValues.slice();
-
-    let firstValNum = Number(newList[0]);
-    let secondValNum = Number(newList[1]);
-    switch (choiseOperation) {
+function partialResult(a, b) {
+    let firstV = Number(a);
+    let secondV = Number(b);
+ 
+    switch (choiseOpt) {
         case '+':
-            add(firstValNum, secondValNum)
+            add(firstV, secondV)
 
             break;
         case '-':
-            subtract(firstValNum, secondValNum)
+            subtract(firstV, secondV)
 
             break
         case '*':
@@ -151,34 +165,29 @@ function partialResult() {
 const deleteAll = function () {
     console.log("deleting");
     resultFrame.textContent = "";
+    historyFrame.textContent = "";
 
-    listOfOperators = [];
+    listOpt = [];
     listOfValues = [];
     history = [];
     firstPartialV = "";
     secondPartialV = "";
-    choiseOperation = "";
+    choiseOpt = "";
     result = 0;
     tester = "";
+
+
 
 }
 
 const back = function () {
-    let identi = optElements.some((element) => {
-        return element == history[history.length-1];
-    })
-
-    console.log("back");
-    if(identi){
-        listOfOperators.pop();
-    
-    }else{
-        let minusTheLast = firstPartialV.slice(0,-1);
-        firstPartialV = minusTheLast;
-        console.log(firstPartialV);
-        resultFrame.textContent = firstPartialV;
-
-    }
+    console.log(history);
+   
+    let minusTheLast = firstPartialV.slice(0, -1);
+    firstPartialV = minusTheLast;
+    console.log(firstPartialV);
+    resultFrame.textContent = firstPartialV;
+    historyFrame.textContent = firstPartialV;
 
 }
 

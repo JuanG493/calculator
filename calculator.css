@@ -13,13 +13,18 @@ body{
     
     align-items: center;
     border: 2px solid rebeccapurple;
-    margin-top: 10%;
+    margin-top: 4%;
     /* min-height: fit-content; */
 }
 .output{
     height: 50px;
     background-color: rgba(95, 163, 223, 0.3);
-    border: 2px solid black;
+    border: 1px solid black;
+    text-align: right;
+    padding-top: 10px;
+    padding-right: 10px;
+    font-size: xx-large;
+    
     /* width: 62%; */
     /* align-self: stretch; */
 }
@@ -51,4 +56,12 @@ button {
 #result{
     grid-column: 2/ 4 ;
     grid-row: 5;
+}
+
+.history{
+    /* min-width: 10px; */
+    min-height: 4%;
+    background-color: red;
+    text-align: right ;
+
 }
