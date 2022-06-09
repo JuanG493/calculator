@@ -38,66 +38,96 @@ function calculatorNumbs() {
     let histoValue = historyFrame.textContent;
     let lastOperator = listOpt[listOpt.length - 1];
 
-
+    
+    
     theText = this.textContent;
-
-
+    
+    
     const surchEle = optElements.some((element) => {
         return element == theText;
     })
 
+    let lastItemHistory = history[history.length-1];
+    const surchLastItemHistory = history.some((element) =>{
+        return element == lastItemHistory;
+    })
+    
 
-    if (!surchEle) {
-        historyFrame.textContent += theText;
+    if (theText != "=" && surchEle && surchLastItemHistory) {//changed the operator
+        console.log("list of operadores: " + listOpt);
+        console.log("the las opt: " + lastOperator);
 
-    }
-
-
-
-    if (this.textContent == 'DEL') {
-        deleteAll();
-
-    } else if (this.textContent == 'CE') {
-        back();
-    } else {
-
-        if (lastOperator == "=" && theText != '=') {
-            listOfValues.pop();
-        }
-
-
-        if (theText != '=' && surchEle) {//check the last operator
-            choiseOpt = theText;
-            historyFrame.textContent += theText;//umm
-        }
+        listOpt.pop();
+        listOpt.push(theText);
+        history.pop();
+        history.push(theText);
+        listOpt.pop();
+        listOpt.push(theText);
+        choiseOpt = theText;
+        
+        
+    }else{
 
 
-        if (!surchEle) {//para numeros
-            firstPartialV += theText;
-            resultFrame.textContent = firstPartialV;
-            if (listOfValues.length >= 2) {
-                historyFrame.textContent += firstPartialV;//umm
-                history.push(theText);
-                partialResult(...listOfValues)
-            }
-
-
-        } else {
-            listOpt.push(theText);
-            if (firstPartialV != "") {
-
+        if (this.textContent == 'DEL') {
+            deleteAll();
+    
+        } else if (this.textContent == 'CE') {
+            if(firstPartialV != "" && firstPartialV != history[history.length-1]){
+    
                 history.push(firstPartialV);
-                listOfValues.push(firstPartialV);
-                firstPartialV = "";
-
-            }history.push(theText);
-
-            if (listOpt.length >= 2 && listOfValues.length >= 2) {//quiere decir segundo simbolo por ende llmar la funcion
-                partialResult(...listOfValues);
+                back();
+            }else{
+                back();
+            }
+        } else {
+    
+            if (lastOperator == "=" && theText != '=') {
+                listOfValues.pop(); //borrar el segundo valor y operar con uno nuevo
+            }
+    
+    
+            if (theText != '=' && surchEle) {//check the last operator
+                choiseOpt = theText;
+                // historyFrame.textContent += theText;//umm
+                // history.push(theText);
+            }
+    
+    
+            if (!surchEle) {//para numeros
+                firstPartialV += theText;
+                resultFrame.textContent = firstPartialV;
+                if (listOfValues.length >= 2) {
+                    // historyFrame.textContent += firstPartialV;//umm
+                    history.push(theText);
+                    partialResult(...listOfValues)
+                }
+    
+    
+            } else {
+                listOpt.push(theText);
+                if (firstPartialV != "") {
+    
+                    history.push(firstPartialV);
+                    listOfValues.push(firstPartialV);
+                    firstPartialV = "";
+    
+                }history.push(theText);
+    
+                if (listOpt.length >= 2 && listOfValues.length >= 2) {//quiere decir segundo simbolo por ende llmar la funcion
+                    partialResult(...listOfValues);
+                }
             }
         }
     }
     console.log(history);
+    let stringHistory = history.join(" ");
+    historyFrame.textContent == "";
+
+    historyFrame.textContent = stringHistory;
+
+
+
 }   
 
 
@@ -181,13 +211,23 @@ const deleteAll = function () {
 }
 
 const back = function () {
-    console.log(history);
+
+
+
+    // console.log(historyFrame.textContent);
    
     let minusTheLast = firstPartialV.slice(0, -1);
     firstPartialV = minusTheLast;
-    console.log(firstPartialV);
+
+    history.pop();
+    history.push(firstPartialV);
+    // console.log(firstPartialV);
     resultFrame.textContent = firstPartialV;
-    historyFrame.textContent = firstPartialV;
+
+    // let theLastOne =  history.join("");
+    // let endString = theLastOne[theLastOne.length-2];
+
+    // historyFrame.textContent = minusTheLast;
 
 }
 
