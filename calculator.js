@@ -31,12 +31,13 @@ let listOfValues = [];
 let history = [];
 let theText = "";
 
-
+let lastOperator= "";
+let secondValueN = "";
 
 //filters
 function calculatorNumbs() {
     let histoValue = historyFrame.textContent;
-    let lastOperator = listOpt[listOpt.length - 1];
+    // let lastOperator = listOpt[listOpt.length - 1];
 
     
     
@@ -51,9 +52,10 @@ function calculatorNumbs() {
     const surchLastItemHistory = history.some((element) =>{
         return element == lastItemHistory;
     })
+    let a = false;
     
 
-    if (theText != "=" && surchEle && surchLastItemHistory) {//changed the operator
+    if (theText != "=" && surchEle && surchLastItemHistory && firstPartialV == "" && a) {//changed the operator
         console.log("list of operadores: " + listOpt);
         console.log("the las opt: " + lastOperator);
 
@@ -81,17 +83,33 @@ function calculatorNumbs() {
                 back();
             }
         } else {
-    
-            if (lastOperator == "=" && theText != '=') {
-                listOfValues.pop(); //borrar el segundo valor y operar con uno nuevo
+            if(secondValueN != "" && theText == "="){
+                listOfValues.push(secondValueN);
             }
+            if(theText != "="){
+                secondValueN = "";
+            }
+            // }
+    
+            // if (lastOperator == "=" && theText != '=') {
+            //     listOfValues.pop(); //borrar el segundo valor y operar con uno nuevo
+            // }
     
     
             if (theText != '=' && surchEle) {//check the last operator
-                choiseOpt = theText;
+                listOpt.push(theText);
+                if(listOpt.length <=1){
+                    choiseOpt = theText;
+                    
+
+
+                }else{
+                    choiseOpt = listOpt[listOpt.length-2]
+                }
                 // historyFrame.textContent += theText;//umm
                 // history.push(theText);
             }
+            // choiseOpt = listOpt[listOpt.length-2];
     
     
             if (!surchEle) {//para numeros
@@ -105,7 +123,7 @@ function calculatorNumbs() {
     
     
             } else {
-                listOpt.push(theText);
+                // listOpt.push(theText);
                 if (firstPartialV != "") {
     
                     history.push(firstPartialV);
@@ -114,17 +132,18 @@ function calculatorNumbs() {
     
                 }history.push(theText);
     
-                if (listOpt.length >= 2 && listOfValues.length >= 2) {//quiere decir segundo simbolo por ende llmar la funcion
+                if (listOfValues.length >= 2) {// cambie aqui //quiere decir segundo simbolo por ende llmar la funcion
                     partialResult(...listOfValues);
                 }
             }
         }
+        console.log(history);
+        let stringHistory = history.join(" ");
+        historyFrame.textContent == "";
+    
+        historyFrame.textContent = stringHistory;
+        choiseOpt = listOpt[listOpt.length-1];
     }
-    console.log(history);
-    let stringHistory = history.join(" ");
-    historyFrame.textContent == "";
-
-    historyFrame.textContent = stringHistory;
 
 
 
@@ -141,19 +160,29 @@ function solutionOutp(solution) { //quita el primero y pone el resultaso en su l
         resultFrame.textContent = solution;
         historyFrame.textContent = solution;//umm
         
-        history.push(solution);
+        history = [solution];
+        secondValueN = listOfValues[1];
+        listOfValues.pop();
+        // lastOperator = "=";
+        // lastOperator = theText;
+        // history.push(solution);
 
     } else {
-        
         console.log("result: " + solution)
         listOfValues.splice(0, 1, solution.toString(10))
         //     // console.log(listOfValues);
         listOfValues.pop();
         resultFrame.textContent = solution;
-        //     // console.log(listOfValues);
-        historyFrame.textContent = solution;//umm
+        history = [solution];
+        secondValueN = "";
+        // lastOperator = "";
+        // lastOperator =
         
-        history.push(solution);
+        
+        //     // console.log(listOfValues);
+        // historyFrame.textContent = solution;//umm
+        
+        // history.push(solution);
         //     historyFrame.textContent = listOfValues[0];
         
     }
@@ -162,6 +191,27 @@ function solutionOutp(solution) { //quita el primero y pone el resultaso en su l
 }
 
 function partialResult(a, b) {
+    // console.log(choiseOpt);
+        // choiseOpt= listOpt[listOpt.length-2];//two back
+
+
+    // let reversearg = listOpt.reverse();
+
+    // function operatorToFind (element){
+    //     return element != "=";
+    // }
+
+    // let testing = reversearg.find(operatorToFind);
+    // // console.log(testing);
+    // choiseOpt = testing;
+
+
+    
+    // if((typeof(choiseOpt)) == undefined){
+        
+
+
+    
     let firstV = Number(a);
     let secondV = Number(b);
  
