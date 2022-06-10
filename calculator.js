@@ -1,47 +1,84 @@
 let mainFrame = document.querySelector('.button-frame');
 
-let elementsNmae = [7, 8, 9, '*', 4, 5, 6, '-', 1, 2, 3, '+', '÷', 'DEL', 0, 'CE', '.', '='];
-let idElemens = ['seven', 'eigh', 'nine', 'mult', 'four', 'five', 'six', 'min', 'one', 'two', 'three', 'sum', 'cero', 'float', 'division', 'CE', 'DEL', 'result']
+let elementsNmae = [7, 8, 9, '*', 4, 5, 6, '-', 1, 2, 3, '+', '÷', 'DEL', 0, '⌫', '.', '='];
+let infoDataKey = [7, 8, 9, '*', 4, 5, 6, '-', 1, 2, 3, '+', '/', 'Delete', 0, 'Backspace', '.', 'Enter'];
+let idElemens = ['seven', 'eigh', 'nine', 'mult', 'four', 'five', 'six', 'min', 'one', 'two', 'three', 'sum', 'cero', 'Delete', 'division', 'Backspace', 'float', 'Enter']
 let optElements = ["*", '+', '-', '÷', '='];
 
 for (let a = 0; a <= elementsNmae.length - 1; a++) {
     let divchild = document.createElement('button');
     divchild.classList.add(`divChild`);
     divchild.setAttribute('id', `${idElemens[a]}`)
-    divchild.setAttribute('data-set', `${elementsNmae[a]}`)
+    divchild.setAttribute('data-key', `${infoDataKey[a]}`)
     divchild.textContent = elementsNmae[a];
     mainFrame.appendChild(divchild);
 }
 
 let buttons = document.querySelectorAll('button');
 buttons.forEach(element => {
-    element.addEventListener("click", calculatorNumbs);
+    element.addEventListener("click", filterFunct);
 });
 
+const testing = document.querySelector('HTML');
+
+testing.addEventListener("keydown", function (cap){
+    let infoText = cap.key;
+    const findIds = infoDataKey.some( (element) => {
+        return element == infoText
+    })
+
+    if(findIds){
+
+        let buttonCap = document.querySelector(`button[data-key="${infoText}"]`)
+        let info = buttonCap.textContent;
+        calculatorNumbs(info)
+    } 
+
+    });
+
+function filterFunct(){
+    let info = this.textContent;
+    calculatorNumbs(info)
+
+
+}
+
+
+
+
 let resultFrame = document.querySelector('.output');
-let historyFrame = document.querySelector('.history')
+let historyFrame = document.querySelector('.history');
+
+let pointButton = document.querySelector('#float');
 
 let firstPartialV = "";
 let secondPartialV = "";
 let choiseOpt = "";
-let tester = "";
+// let tester = "";
 
-let listOpt = [];  //the same as a result
+let listOpt = [];  
 let listOfValues = [];
 let history = [];
 let theText = "";
 
-let lastOperator= "";
+// let lastOperator= "";
 let secondValueN = "";
+let wasAnOperator = 0;
 
 //filters
-function calculatorNumbs() {
-    let histoValue = historyFrame.textContent;
+function calculatorNumbs(info) {
+    // console.log(info)
+    // let histoValue = historyFrame.textContent;
     // let lastOperator = listOpt[listOpt.length - 1];
+    // if(button){
+    //     theText =button 
+    // }else{
+
+    // }
+    // theText = this.textContent;
+    theText = info
 
     
-    
-    theText = this.textContent;
     
     
     const surchEle = optElements.some((element) => {
@@ -52,15 +89,16 @@ function calculatorNumbs() {
     const surchLastItemHistory = history.some((element) =>{
         return element == lastItemHistory;
     })
-    let a = false;
+
+
+    if(theText == "=" && history.length < 1){
+        resultFrame.textContent = "enter a value"
+
+    }
     
 
-    if (theText != "=" && surchEle && surchLastItemHistory && firstPartialV == "" && a) {//changed the operator
-        console.log("list of operadores: " + listOpt);
-        console.log("the las opt: " + lastOperator);
+    else if (theText != "=" && surchEle && surchLastItemHistory && choiseOpt != "" && wasAnOperator ) {//alternar entre operadores
 
-        listOpt.pop();
-        listOpt.push(theText);
         history.pop();
         history.push(theText);
         listOpt.pop();
@@ -71,10 +109,15 @@ function calculatorNumbs() {
     }else{
 
 
-        if (this.textContent == 'DEL') {
+        if(theText == "."){
+            pointButton.removeEventListener("click",calculatorNumbs);
+        }
+
+
+        if (theText == 'DEL') {
             deleteAll();
     
-        } else if (this.textContent == 'CE') {
+        } else if (theText == '⌫') {
             if(firstPartialV != "" && firstPartialV != history[history.length-1]){
     
                 history.push(firstPartialV);
@@ -98,6 +141,8 @@ function calculatorNumbs() {
     
             if (theText != '=' && surchEle) {//check the last operator
                 listOpt.push(theText);
+                wasAnOperator = 1;
+                pointButton.addEventListener("click",calculatorNumbs);
                 if(listOpt.length <=1){
                     choiseOpt = theText;
                     
@@ -113,6 +158,7 @@ function calculatorNumbs() {
     
     
             if (!surchEle) {//para numeros
+                wasAnOperator = 0;
                 firstPartialV += theText;
                 resultFrame.textContent = firstPartialV;
                 if (listOfValues.length >= 2) {
@@ -137,13 +183,13 @@ function calculatorNumbs() {
                 }
             }
         }
-        console.log(history);
         let stringHistory = history.join(" ");
-        historyFrame.textContent == "";
-    
         historyFrame.textContent = stringHistory;
         choiseOpt = listOpt[listOpt.length-1];
     }
+        let stringHistory = history.join(" ");
+        historyFrame.textContent = stringHistory;
+
 
 
 
@@ -152,15 +198,32 @@ function calculatorNumbs() {
 
 function solutionOutp(solution) { //quita el primero y pone el resultaso en su lugar luego borra el segundo para una nueva operacion.
     
+    // console.log(typeof(solution));
+    let stringSolution = solution.toString(10);
+    console.log(stringSolution.length );
+    console.log(solution);
     
+    if(stringSolution.length >= 17){
+       solution =  Math.round(solution);
+       console.log(solution);
+
+    }
+
+
+
+
+
+    listOfValues.splice(0, 1, solution.toString(10))
+    resultFrame.textContent = solution;
+    history = [solution];
     if (theText == '=') {
 
-        console.log("result: " + solution);
-        listOfValues.splice(0, 1, solution.toString(10))
-        resultFrame.textContent = solution;
-        historyFrame.textContent = solution;//umm
+        // console.log("result: " + solution);
+        // listOfValues.splice(0, 1, solution.toString(10))
+        // resultFrame.textContent = solution;
+        // historyFrame.textContent = solution;//umm
         
-        history = [solution];
+        // history = [solution];
         secondValueN = listOfValues[1];
         listOfValues.pop();
         // lastOperator = "=";
@@ -168,12 +231,12 @@ function solutionOutp(solution) { //quita el primero y pone el resultaso en su l
         // history.push(solution);
 
     } else {
-        console.log("result: " + solution)
-        listOfValues.splice(0, 1, solution.toString(10))
+        // console.log("result: " + solution)
+        // listOfValues.splice(0, 1, solution.toString(10))
+        // resultFrame.textContent = solution;
         //     // console.log(listOfValues);
+        // history = [solution];
         listOfValues.pop();
-        resultFrame.textContent = solution;
-        history = [solution];
         secondValueN = "";
         // lastOperator = "";
         // lastOperator =
@@ -217,23 +280,29 @@ function partialResult(a, b) {
  
     switch (choiseOpt) {
         case '+':
-            add(firstV, secondV)
+            solutionOutp(firstV + secondV);
 
             break;
         case '-':
-            subtract(firstV, secondV)
+            solutionOutp(firstV - secondV)
 
             break
         case '*':
+            solutionOutp(firstV * secondV)
 
             break
         case '÷':
+            if(secondV == 0){
+                resultFrame.textContent = "can no divide by 0"
+            }else{
+                solutionOutp(firstV / secondV)
+            }
 
             break
-        case '=':
-            equal();
+        // case '=':
+        //     equal();
 
-            break
+            // break
 
         // default:
 
@@ -254,7 +323,7 @@ const deleteAll = function () {
     secondPartialV = "";
     choiseOpt = "";
     result = 0;
-    tester = "";
+    // tester = "";
 
 
 
@@ -262,10 +331,6 @@ const deleteAll = function () {
 
 const back = function () {
 
-
-
-    // console.log(historyFrame.textContent);
-   
     let minusTheLast = firstPartialV.slice(0, -1);
     firstPartialV = minusTheLast;
 
@@ -282,33 +347,17 @@ const back = function () {
 }
 
 
-const add = function (a, b) {
-    solutionOutp(a + b);
+// const add = function (a, b) {
+//     solutionOutp(a + b);
 
-};
+// };
 
-const subtract = function (a, b) {
-    solutionOutp(a - b);
+// const subtract = function (a, b) {
+//     solutionOutp(a - b);
 
-};
+// };
 
-const sum = function (arrayNum) {
-    let result = 0;
-    arrayNum.forEach(element => {
-        result += element
-    }); return result
+// const multiply = function (a,b) {
+//     solutionOutp(a*b);
+// };  
 
-
-
-};
-
-const multiply = function (listOfI) {
-    let resultM = 1;
-    listOfI.forEach(element => {
-        resultM *= element
-    });
-    if (resultM === 1) {
-        return 0;
-    } return resultM;
-
-};  
